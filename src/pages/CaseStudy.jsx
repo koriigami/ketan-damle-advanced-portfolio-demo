@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   motion,
@@ -11,6 +11,17 @@ import Reveal from '../components/motion/Reveal'
 import { projects, projectBySlug } from '../data/projects'
 import { haptic } from '../store/settings'
 
+// UX blocks
+import CompareSlider from '../components/ux/CompareSlider'
+import PersonaCard from '../components/ux/PersonaCard'
+import EmpathyMap from '../components/ux/EmpathyMap'
+import JourneyMap from '../components/ux/JourneyMap'
+import IATree from '../components/ux/IATree'
+import UserFlow from '../components/ux/UserFlow'
+import HeuristicsGrid from '../components/ux/HeuristicsGrid'
+import WireframeGrid from '../components/ux/WireframeGrid'
+import UsabilityFindings from '../components/ux/UsabilityFindings'
+
 export default function CaseStudy() {
   const { slug } = useParams()
   const project = projectBySlug(slug)
@@ -18,6 +29,10 @@ export default function CaseStudy() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [slug])
+
+  const { scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.3 })
+  const barWidth = useTransform(progress, [0, 1], ['0%', '100%'])
 
   if (!project) {
     return (
@@ -34,23 +49,15 @@ export default function CaseStudy() {
   const idx = projects.findIndex((p) => p.slug === slug)
   const next = projects[(idx + 1) % projects.length]
 
-  const { scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.3 })
-  const barWidth = useTransform(progress, [0, 1], ['0%', '100%'])
-
   return (
     <main>
-      {/* progress bar */}
       <motion.div
         style={{ width: barWidth }}
         className="fixed top-0 left-0 z-50 h-[3px] origin-left bg-accent"
       />
 
-      {/* Hero */}
-      <section
-        className="relative mx-auto max-w-7xl px-6 pt-36 pb-14 md:px-8 md:pt-44 md:pb-20"
-      >
-        {/* accent glow behind title */}
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="relative mx-auto max-w-7xl px-6 pt-36 pb-14 md:px-8 md:pt-44 md:pb-20">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -top-24 -left-40 -z-0 size-[520px] rounded-full opacity-40"
@@ -82,7 +89,8 @@ export default function CaseStudy() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="mt-5 text-6xl leading-[0.98] font-semibold tracking-tight md:text-8xl"
+              className="display mt-5 text-ink"
+              style={{ fontSize: 'clamp(3rem, 8vw, 7.5rem)' }}
             >
               {project.title}
             </motion.h1>
@@ -131,9 +139,7 @@ export default function CaseStudy() {
         <div className="mt-6 grid grid-cols-2 gap-8 border-t border-line pt-8 md:grid-cols-4 md:gap-10">
           {project.metrics.map((m) => (
             <Reveal key={m.label} y={16}>
-              <div className="text-4xl font-semibold tracking-tight md:text-5xl">
-                {m.value}
-              </div>
+              <div className="display text-4xl md:text-5xl">{m.value}</div>
               <div className="mt-2 text-base text-ink-2">{m.label}</div>
               {m.hint && (
                 <div className="mt-1 font-mono text-[11px] tracking-wide text-ink-3 uppercase">
@@ -150,7 +156,7 @@ export default function CaseStudy() {
         <div className="grid grid-cols-1 gap-14 md:grid-cols-12 md:gap-16">
           <ChapterSpine chapters={project.chapters} />
 
-          <div className="space-y-24 md:col-span-9 md:space-y-40">
+          <div className="space-y-28 md:col-span-9 md:space-y-40">
             {project.chapters.map((ch, i) => (
               <ChapterBody key={ch.id} chapter={ch} accent={project.accent} index={i} />
             ))}
@@ -195,9 +201,7 @@ export default function CaseStudy() {
             <p className="font-mono text-xs tracking-widest text-ink-3 uppercase">
               {next.tag} · {next.industry}
             </p>
-            <h3 className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl">
-              {next.title}
-            </h3>
+            <h3 className="display mt-2 text-4xl md:text-5xl">{next.title}</h3>
             <p className="mt-2 font-serif text-xl italic text-ink/85">{next.tagline}</p>
             <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium">
               <span className="link-underline">Read next case study</span>
@@ -276,21 +280,25 @@ function ChapterBody({ chapter, accent, index }) {
         >
           {chapter.eyebrow}
         </p>
-        <h3 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold tracking-tight md:text-5xl">
+        <h3 className="display mt-3 max-w-2xl text-3xl md:text-5xl" style={{ letterSpacing: '-0.02em' }}>
           {chapter.title}
         </h3>
       </Reveal>
+
       <div className="mt-8 max-w-2xl space-y-5 text-lg leading-relaxed text-ink-2">
         {chapter.body.map((p, i) => (
           <Reveal key={i} y={20} delay={i * 0.05}>
-            <p>{p}</p>
+            <p className={i === 0 && index > 0 ? 'dropcap' : ''}>{p}</p>
           </Reveal>
         ))}
       </div>
 
       {chapter.quote && (
         <Reveal>
-          <blockquote className="mt-10 border-l-2 border-accent pl-6 max-w-2xl font-serif text-2xl italic leading-snug text-ink md:text-3xl">
+          <blockquote
+            className="mt-10 max-w-2xl border-l-2 pl-6 font-serif text-2xl leading-snug italic text-ink md:text-3xl"
+            style={{ borderColor: accent }}
+          >
             {chapter.quote.text}
             <cite className="mt-3 block font-sans text-sm not-italic text-ink-3">
               — {chapter.quote.who}
@@ -306,9 +314,7 @@ function ChapterBody({ chapter, accent, index }) {
               key={img.src}
               y={30}
               delay={i * 0.08}
-              className={
-                chapter.images.length === 1 ? 'md:col-span-2' : undefined
-              }
+              className={chapter.images.length === 1 ? 'md:col-span-2' : undefined}
             >
               <figure className="overflow-hidden rounded-2xl bg-bg-2">
                 <img
@@ -327,6 +333,55 @@ function ChapterBody({ chapter, accent, index }) {
           ))}
         </div>
       )}
+
+      {/* Typed UX blocks */}
+      {chapter.blocks?.map((b, i) => (
+        <div key={i} className="mt-12">
+          <Reveal>
+            <BlockRenderer block={b} />
+          </Reveal>
+        </div>
+      ))}
     </div>
   )
+}
+
+function BlockRenderer({ block }) {
+  switch (block.type) {
+    case 'compare':
+      return (
+        <CompareSlider
+          a={block.a}
+          b={block.b}
+          aLabel={block.aLabel}
+          bLabel={block.bLabel}
+          aspect={block.aspect}
+          caption={block.caption}
+        />
+      )
+    case 'personas':
+      return (
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          {block.items.map((persona) => (
+            <PersonaCard key={persona.id} persona={persona} />
+          ))}
+        </div>
+      )
+    case 'empathy':
+      return <EmpathyMap subject={block.subject} data={block.data} />
+    case 'journey':
+      return <JourneyMap stages={block.stages} />
+    case 'ia':
+      return <IATree root={block.root} />
+    case 'flow':
+      return <UserFlow nodes={block.nodes} />
+    case 'heuristics':
+      return <HeuristicsGrid items={block.items} />
+    case 'wireframes':
+      return <WireframeGrid items={block.items} columns={block.columns} />
+    case 'usability':
+      return <UsabilityFindings items={block.items} participants={block.participants} />
+    default:
+      return null
+  }
 }
