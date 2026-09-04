@@ -18,8 +18,19 @@ function WorkCard({ project, index }) {
   return (
     <div
       ref={cardRef}
-      className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10"
+      className="group/row relative grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10"
     >
+      {/* Oversized editorial index number in the gutter */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute top-0 hidden select-none display leading-none text-line-strong opacity-40 transition-opacity duration-500 group-hover/row:opacity-70 md:block ${
+          index % 2 === 1 ? 'right-[-2rem] text-right' : 'left-[-2rem]'
+        }`}
+        style={{ fontSize: 'clamp(6rem, 12vw, 12rem)', color: 'color-mix(in oklch, var(--ink) 8%, transparent)' }}
+      >
+        0{index + 1}
+      </div>
+
       <div className={`md:col-span-8 ${index % 2 === 1 ? 'md:order-2' : ''}`}>
         <Link
           to={`/work/${project.slug}`}
