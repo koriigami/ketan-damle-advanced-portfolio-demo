@@ -1,8 +1,10 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/geist';
+@import '@fontsource-variable/fraunces';
 
 @theme inline {
     --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Fraunces Variable', 'Times New Roman', Georgia, serif;
     --font-serif: 'Instrument Serif', 'Times New Roman', Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
@@ -21,7 +23,7 @@
 }
 
 /* ────────────────────────────────────────────────────────────
-   Themes — swap by setting data-theme on <html>
+   Themes
    ──────────────────────────────────────────────────────────── */
 
 :root,
@@ -89,7 +91,6 @@
     color-scheme: dark;
 }
 
-/* Default: honour prefers-color-scheme if no explicit theme */
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
         --bg: oklch(0.16 0.008 260);
@@ -145,6 +146,56 @@
     a { color: inherit; text-decoration: none; }
 }
 
+/* ────────────────────────────────────────────────────────────
+   Editorial helpers
+   ──────────────────────────────────────────────────────────── */
+
+/* Display type: Fraunces with expressive optical size and soft-edge axis */
+.display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 144, 'SOFT' 60;
+    letter-spacing: -0.03em;
+    line-height: 0.92;
+}
+.display-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-optical-sizing: auto;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    letter-spacing: -0.02em;
+}
+
+/* Drop cap used at the top of a case-study chapter body */
+.dropcap::first-letter {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    float: left;
+    font-size: 5.2rem;
+    line-height: 0.9;
+    padding: 0.3rem 0.75rem 0 0;
+    color: var(--accent);
+}
+
+/* Marginalia: small side notes floated in the margin on wide screens */
+.marginalia {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+}
+
+/* Ampersand ornament */
+.ornament {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    color: var(--accent);
+    line-height: 0.85;
+}
+
 /* Grain overlay */
 .grain::after {
     content: '';
@@ -157,31 +208,31 @@
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
-/* Marquee */
+/* Marquee (both directions supported) */
 @keyframes marquee {
     from { transform: translate3d(0, 0, 0); }
     to { transform: translate3d(-50%, 0, 0); }
 }
+@keyframes marquee-rev {
+    from { transform: translate3d(-50%, 0, 0); }
+    to { transform: translate3d(0, 0, 0); }
+}
 .animate-marquee { animation: marquee 42s linear infinite; }
+.animate-marquee-rev { animation: marquee-rev 52s linear infinite; }
 
-/* Aurora glow */
-@keyframes aurora {
-    0%, 100% { transform: translate3d(-10%, 0, 0) scale(1); }
-    50% { transform: translate3d(10%, -6%, 0) scale(1.12); }
+/* Dappled light: two drifting soft masses, low-opacity, blended */
+@keyframes dapple-a {
+    0%, 100% { transform: translate3d(-6%, -4%, 0) rotate(-2deg); }
+    50% { transform: translate3d(6%, 6%, 0) rotate(3deg); }
 }
-.aurora-glow {
-    position: absolute;
-    inset: -20%;
-    background:
-        radial-gradient(40% 40% at 30% 40%, color-mix(in oklch, var(--accent) 55%, transparent) 0%, transparent 60%),
-        radial-gradient(35% 35% at 70% 60%, color-mix(in oklch, var(--accent-2) 55%, transparent) 0%, transparent 60%);
-    filter: blur(60px);
-    opacity: 0.55;
-    pointer-events: none;
-    animation: aurora 22s ease-in-out infinite;
+@keyframes dapple-b {
+    0%, 100% { transform: translate3d(8%, 6%, 0) rotate(2deg); }
+    50% { transform: translate3d(-8%, -4%, 0) rotate(-3deg); }
 }
+.dapple-a { animation: dapple-a 26s ease-in-out infinite; will-change: transform; }
+.dapple-b { animation: dapple-b 34s ease-in-out infinite; will-change: transform; }
 
-/* Text underline */
+/* Underline */
 .link-underline {
     background-image: linear-gradient(var(--accent), var(--accent));
     background-repeat: no-repeat;
@@ -191,7 +242,17 @@
 }
 .link-underline:hover { background-size: 100% 2px; }
 
-/* Custom cursor plate (desktop only) */
+/* Rotating word slot for hero */
+.rot-slot {
+    display: inline-block;
+    position: relative;
+    min-width: 5ch;
+    text-align: left;
+    overflow: hidden;
+    vertical-align: baseline;
+}
+
+/* Custom cursor plate */
 .cursor-halo {
     position: fixed;
     top: 0;
@@ -217,6 +278,41 @@
     .cursor-halo { display: none; }
 }
 
+/* Compare slider */
+.compare-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent) 25%, transparent);
+    cursor: ew-resize;
+    z-index: 3;
+}
+.compare-handle::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+    background: var(--accent);
+    border-radius: 9999px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.compare-handle::after {
+    content: '↔';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--on-accent);
+    font-size: 18px;
+    font-weight: 700;
+    z-index: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -224,5 +320,5 @@
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
     }
-    .animate-marquee, .aurora-glow { animation: none !important; }
+    .animate-marquee, .animate-marquee-rev, .dapple-a, .dapple-b { animation: none !important; }
 }

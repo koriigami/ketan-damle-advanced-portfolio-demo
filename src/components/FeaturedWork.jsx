@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { projects } from '../data/projects'
-import ParticleField from './three/ParticleField'
 import Reveal from './motion/Reveal'
 import { haptic } from '../store/settings'
 
@@ -91,9 +90,8 @@ function WorkCard({ project, index }) {
 export default function FeaturedWork() {
   return (
     <section id="work" className="relative overflow-hidden px-6 py-24 md:px-8 md:py-32">
-      <div className="pointer-events-none absolute inset-0 opacity-30 mix-blend-plus-lighter">
-        <ParticleField />
-      </div>
+      {/* Editorial rules top & bottom to feel like a magazine spread */}
+      <div aria-hidden="true" className="absolute top-16 right-6 left-6 h-px bg-line md:right-8 md:left-8" />
 
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-14 flex flex-col items-start justify-between gap-6 md:mb-20 md:flex-row md:items-end">
