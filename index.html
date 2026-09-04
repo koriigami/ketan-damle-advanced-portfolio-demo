@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f0e6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1116" media="(prefers-color-scheme: dark)" />
+
+    <title>Ketan Damle — Product Designer · Advanced Demo</title>
+    <meta
+      name="description"
+      content="Advanced portfolio demo — themes, three.js, motion, ambient audio. Product designer working across fintech, wellness, and B2B SaaS."
+    />
+    <meta name="author" content="Ketan Damle" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ketan Damle — Advanced Portfolio Demo" />
+    <meta
+      property="og:description"
+      content="Selected product design work with an advanced front-end: 4 themes, three.js hero, scroll-driven motion, ambient audio."
+    />
+    <meta property="og:image" content="/og.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Ketan Damle — Advanced Portfolio Demo" />
+    <meta
+      name="twitter:description"
+      content="Selected product design work with an advanced front-end: 4 themes, three.js hero, scroll-driven motion, ambient audio."
+    />
+    <meta name="twitter:image" content="/og.png" />
+
+    <!-- Set the theme early to avoid a flash of the wrong palette -->
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('kd-portfolio-settings');
+          var t = raw ? JSON.parse(raw)?.state?.theme : null;
+          if (t) document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
