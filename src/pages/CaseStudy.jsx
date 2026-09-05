@@ -377,6 +377,79 @@ function BlockRenderer({ block }) {
       return <UserFlow nodes={block.nodes} />
     case 'heuristics':
       return <HeuristicsGrid items={block.items} />
+    case 'images':
+      return (
+        <div className={`grid grid-cols-1 gap-4 ${block.items.length > 2 ? 'md:grid-cols-2' : ''}`}>
+          {block.items.map((img, i) => (
+            <figure
+              key={img.src + i}
+              className={`overflow-hidden rounded-2xl border border-line bg-bg-2 ${
+                block.items.length === 3 && i === 0 ? 'md:col-span-2' : ''
+              }`}
+            >
+              <img
+                src={img.src}
+                alt={img.caption || ''}
+                loading="lazy"
+                className="w-full object-cover"
+              />
+              {img.caption && (
+                <figcaption className="border-t border-line px-4 py-3 font-mono text-xs text-ink-3">
+                  {img.caption}
+                </figcaption>
+              )}
+            </figure>
+          ))}
+        </div>
+      )
+    case 'videos':
+      return (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+          {block.items.map((v) => (
+            <figure key={v.src} className="overflow-hidden rounded-2xl border border-line bg-bg-2">
+              <video
+                src={v.src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="aspect-square w-full object-cover"
+              />
+              <figcaption className="border-t border-line px-3 py-2 font-mono text-[10px] tracking-widest text-ink-3 uppercase md:px-4 md:py-3">
+                {v.label}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )
+    case 'insightGrid':
+      return (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {block.items.map((it, i) => (
+            <div
+              key={i}
+              className="rounded-2xl border border-line bg-card p-5 transition-transform hover:-translate-y-0.5"
+            >
+              <div className="text-base font-semibold tracking-tight text-ink">
+                {it.title}
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-ink-2">{it.text}</p>
+            </div>
+          ))}
+        </div>
+      )
+    case 'stats':
+      return (
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {block.items.map((s, i) => (
+            <div key={i}>
+              <div className="display text-3xl md:text-4xl">{s.value}</div>
+              <div className="mt-1 text-sm text-ink-2">{s.label}</div>
+              {s.hint && <div className="mt-0.5 font-mono text-[10px] tracking-widest text-ink-3 uppercase">{s.hint}</div>}
+            </div>
+          ))}
+        </div>
+      )
     case 'wireframes':
       return <WireframeGrid items={block.items} columns={block.columns} />
     case 'usability':
