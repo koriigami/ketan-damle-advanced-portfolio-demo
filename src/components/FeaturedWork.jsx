@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
+import { JapaneseTowerLandscape } from '@designcodeio/threeui'
 import { ArrowUpRight } from 'lucide-react'
 import { projects } from '../data/projects'
 import Reveal from './motion/Reveal'
+import useReducedMotion from '../hooks/useReducedMotion'
+import useInView from '../hooks/useInView'
 import { haptic } from '../store/settings'
 
 function WorkCard({ project, index }) {
@@ -99,8 +102,37 @@ function WorkCard({ project, index }) {
 }
 
 export default function FeaturedWork() {
+  const reducedMotion = useReducedMotion()
+  // Observed on the fixed-height band itself, not the (very tall) section —
+  // a tall section would stay "intersecting" for its whole scroll length.
+  const [bandRef, sceneInView] = useInView({ rootMargin: '0px' })
+
   return (
     <section id="work" className="relative overflow-hidden px-6 py-24 md:px-8 md:py-32">
+      {/* Fixed-height band, not the full (very tall) scrolling section —
+          the scene is a single WebGL viewport, not a tileable pattern.
+          Only mounted while in view: running more than one ThreeUI scene
+          on the page at once has been observed to stall both. */}
+      <div ref={bandRef} className="absolute inset-x-0 top-0 h-[560px] md:h-[720px]">
+        {!reducedMotion && sceneInView && (
+          <div className="absolute inset-0 opacity-70">
+            <JapaneseTowerLandscape country="japan" className="absolute inset-0 h-full w-full" />
+          </div>
+        )}
+        {/* Scrim so the heading stays legible, fading to the normal page
+            background before the card grid begins. Lighter than a first
+            pass — this scene's muted earth tones need less dimming than
+            the hero's high-saturation sunset to still read once visible. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, color-mix(in oklch, var(--bg) 20%, transparent) 0%, color-mix(in oklch, var(--bg) 55%, transparent) 55%, var(--bg) 100%)',
+          }}
+        />
+      </div>
+
       {/* Editorial rules top & bottom to feel like a magazine spread */}
       <div aria-hidden="true" className="absolute top-16 right-6 left-6 h-px bg-line md:right-8 md:left-8" />
 

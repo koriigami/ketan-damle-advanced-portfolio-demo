@@ -13,6 +13,7 @@ import Spotlight from './Spotlight'
 import Magnetic from './motion/Magnetic'
 import SplitText from './motion/SplitText'
 import useReducedMotion from '../hooks/useReducedMotion'
+import useInView from '../hooks/useInView'
 import { haptic } from '../store/settings'
 import { siteConfig } from '../data/site-config'
 
@@ -21,6 +22,7 @@ const VERBS = ['ships', 'researches', 'writes', 'codes', 'listens']
 export default function Hero() {
   const [verbIndex, setVerbIndex] = useState(0)
   const reducedMotion = useReducedMotion()
+  const [sectionRef, sceneInView] = useInView({ rootMargin: '0px' })
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 600], [0, 120])
   const y2 = useTransform(scrollY, [0, 600], [0, -80])
@@ -32,16 +34,19 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-svh overflow-hidden pt-28 pb-16 md:pt-40 md:pb-24">
+    <section
+      ref={sectionRef}
+      className="relative min-h-svh overflow-hidden pt-28 pb-16 md:pt-40 md:pb-24"
+    >
       <Spotlight />
       <motion.div style={{ opacity }} className="absolute inset-0">
         {reducedMotion ? (
           <DappledLight />
-        ) : (
+        ) : sceneInView ? (
           <div className="absolute inset-0 opacity-70">
             <LandscapeScene variant="sunset" className="absolute inset-0 h-full w-full" />
           </div>
-        )}
+        ) : null}
       </motion.div>
       {/* Scrim so the headline stays legible over the scene */}
       <div
