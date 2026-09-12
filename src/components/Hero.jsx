@@ -105,12 +105,7 @@ export default function Hero() {
                   </motion.span>
                 </AnimatePresence>
               </span>{' '}
-              0-to-1 products
-            </span>
-            <span className="block">
-              from research to{' '}
-              <span className="display-italic text-ink-2">deployed</span>{' '}
-              code.
+              0-to-1 products.
             </span>
           </h1>
 
