@@ -6,11 +6,13 @@ import {
   useScroll,
   useTransform,
 } from 'framer-motion'
+import { LandscapeScene } from '@designcodeio/threeui'
 import { ArrowDown, ArrowRight, MapPin } from 'lucide-react'
 import DappledLight from './DappledLight'
 import Spotlight from './Spotlight'
 import Magnetic from './motion/Magnetic'
 import SplitText from './motion/SplitText'
+import useReducedMotion from '../hooks/useReducedMotion'
 import { haptic } from '../store/settings'
 import { siteConfig } from '../data/site-config'
 
@@ -18,6 +20,7 @@ const VERBS = ['ships', 'researches', 'writes', 'codes', 'listens']
 
 export default function Hero() {
   const [verbIndex, setVerbIndex] = useState(0)
+  const reducedMotion = useReducedMotion()
   const { scrollY } = useScroll()
   const y1 = useTransform(scrollY, [0, 600], [0, 120])
   const y2 = useTransform(scrollY, [0, 600], [0, -80])
@@ -32,8 +35,23 @@ export default function Hero() {
     <section className="relative min-h-svh overflow-hidden pt-28 pb-16 md:pt-40 md:pb-24">
       <Spotlight />
       <motion.div style={{ opacity }} className="absolute inset-0">
-        <DappledLight />
+        {reducedMotion ? (
+          <DappledLight />
+        ) : (
+          <div className="absolute inset-0 opacity-70">
+            <LandscapeScene variant="sunset" className="absolute inset-0 h-full w-full" />
+          </div>
+        )}
       </motion.div>
+      {/* Scrim so the headline stays legible over the scene */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(180deg, color-mix(in oklch, var(--bg) 55%, transparent) 0%, color-mix(in oklch, var(--bg) 15%, transparent) 45%, var(--bg) 100%)',
+        }}
+      />
 
       <div
         aria-hidden="true"
