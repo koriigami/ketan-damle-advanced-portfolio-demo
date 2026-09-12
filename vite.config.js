@@ -10,4 +10,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/three')) return 'three'
+          if (id.includes('node_modules/@designcodeio/threeui')) return 'threeui'
+        },
+      },
+    },
+  },
 })
